@@ -31,7 +31,33 @@ class ManageSchedule extends Component {
     this.props.fetchAllScheduletTime();
   }
 
-  buildDataInputSelect = (inputData, type) => {
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.allDoctors !== this.props.allDoctors) {
+      let dataSelect = this.buildDataInputSelect(this.props.allDoctors);
+      this.setState({
+        listDoctors: dataSelect,
+      });
+    }
+
+    if (prevProps.allScheduleTime !== this.props.allScheduleTime) {
+      let data = this.props.allScheduleTime;
+      if (data && data.length > 0) {
+        data = data.map((item) => ({ ...item, isSelected: false }));
+      }
+      this.setState({
+        rangeTime: data,
+      });
+    }
+
+    // if (prevProps.language !== this.props.language) {
+    //     let dataSelect = this.buildDataInputSelect(this.props.allDoctors)
+    //     this.setState({
+    //         listDoctors: dataSelect
+    //     })
+    // }
+  }
+
+  buildDataInputSelect = (inputData) => {
     let result = [];
     let { language } = this.props;
     if (inputData && inputData.length > 0) {
@@ -46,14 +72,17 @@ class ManageSchedule extends Component {
     }
     return result;
   };
-  handleChangeSelect = async (selectedDoctor) => {
-    this.setState({ selectedDoctor });
+
+  handleChangeSelect = async (selectedOption) => {
+    this.setState({ selectedDoctor: selectedOption });
   };
+
   handleOnChangeDatePicker = (date) => {
     this.setState({
       currentDate: date[0],
     });
   };
+
   handleClickBtnTime = (time) => {
     let { rangeTime } = this.state;
     if (rangeTime && rangeTime.length > 0) {
@@ -66,65 +95,57 @@ class ManageSchedule extends Component {
       });
     }
   };
+
   handleSaveSchedule = async () => {
     let { rangeTime, selectedDoctor, currentDate } = this.state;
     let result = [];
     if (!currentDate) {
-      toast.error("Invalid date");
+      toast.error("Invalid date! ");
       return;
     }
     if (selectedDoctor && _.isEmpty(selectedDoctor)) {
-      toast.error("Invalid doctor");
+      toast.error("Invalid selected doctor! ");
       return;
     }
-    let formatedDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER);
+
+    // let formatedDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER);
+    // let formatedDate = moment(currentDate).unix();
+    let formatedDate = new Date(currentDate).getTime();
 
     if (rangeTime && rangeTime.length > 0) {
       let selectedTime = rangeTime.filter((item) => item.isSelected === true);
       if (selectedTime && selectedTime.length > 0) {
-        selectedTime.map((item) => {
-          let obj = {};
-          obj.doctorId = selectedDoctor.value;
-          obj.date = formatedDate;
-          obj.timeType = item.keyMap;
-          result.push(obj);
+        selectedTime.map((schedule) => {
+          let object = {};
+          object.doctorId = selectedDoctor.value;
+          object.date = formatedDate;
+          object.timeType = schedule.keyMap;
+          result.push(object);
         });
       } else {
-        toast.error("Invalid selected time");
+        toast.error("Invalid selected time! ");
         return;
       }
     }
+
     let res = await saveBulkScheduleDoctor({
       arrSchedule: result,
+      doctorId: selectedDoctor.value,
+      formatedDate: formatedDate,
     });
-    console.log("check data res: ", res);
-    console.log("check result", result);
-  };
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.allDoctors !== this.props.allDoctors) {
-      let dataSelect = this.buildDataInputSelect(this.props.allDoctors);
-      this.setState({
-        listDoctors: dataSelect,
-      });
-    }
-    if (prevProps.allScheduleTime !== this.props.allScheduleTime) {
-      let data = this.props.allScheduleTime;
-      if (data && data.length > 0) {
-        data.map((item) => {
-          item.isSeleted = false;
-          return item;
-        });
-      }
 
-      this.setState({
-        rangeTime: data,
-      });
+    if (res && res.errCode === 0) {
+      toast.success("Save Infor succeed! ");
+    } else {
+      toast.error("error saveBulkScheduleDoctor");
+      console.log("error saveBulkScheduleDoctor >>> res:", res);
     }
-  }
+  };
 
   render() {
     let { rangeTime } = this.state;
     let { language } = this.props;
+    let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
     return (
       <>
         <div className="manage-schedule-container">
@@ -154,7 +175,7 @@ class ManageSchedule extends Component {
                   onChange={this.handleOnChangeDatePicker}
                   className="form-control"
                   value={this.state.currentDate}
-                  minDate={new Date()}
+                  minDate={yesterday}
                 />
               </div>
               <div className="col-12 pick-hour-container">

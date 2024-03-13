@@ -23,6 +23,7 @@ import VerifyEmail from "./Patient/VerifyEmail";
 import CancelEmail from "./Patient/CancelEmail";
 import DetailSpecialty from "./Patient/Specialty/DetailSpecialty";
 import DetailClinic from "./Patient/Clinic/DetailClinic";
+import FormRegister from "./Patient/Doctor/FormRegister";
 
 class App extends Component {
   handlePersistorState = () => {
@@ -67,6 +68,7 @@ class App extends Component {
 
                   <Route path={path.HOMEPAGE} component={HomePage} />
                   <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
+                  <Route path="/dat-lich-kham/" component={FormRegister} />
                   <Route
                     path={path.DETAIL_SPECIALTY}
                     component={DetailSpecialty}

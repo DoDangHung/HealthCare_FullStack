@@ -80,6 +80,32 @@
     "choose-date": "Choose date",
     "save": "Save infor"
   },
+  "patient": {
+    "detail-doctor": {
+      "schedule": "Shedule"
+    },
+    "extra-infor-doctor": {
+      "text-address": "Address of examination",
+      "price": "Examination price: ",
+      "detail": "See details",
+      "payment": "The patient can pay the cost in the form of: ",
+      "hide-price": "Hide price list"
+    },
+    "booking-modal": {
+      "title": "Information to book a medical appointment",
+      "fullName": "Fullname",
+      "phoneNumber": "Phone number",
+      "email": "Email",
+      "address": "Address",
+      "reason": "Reason for medical examination",
+      "birthday": "Date of birth",
+      "gender": "Gender",
+      "btnConfirm": "Confirm",
+      "btnCancel": "Cancel",
+      "priceBooking": "Free booking",
+      "price": "Price: "
+    }
+  },
   "sectionspecialty": {
     "title1": "Specialties",
     "title2": "See more"
