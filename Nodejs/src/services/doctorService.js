@@ -283,7 +283,7 @@ let getScheduleByDate = (doctorId, date) => {
       if (!doctorId || !date) {
         resolve({
           errCode: 1,
-          errMessage: "Missing parameter",
+          errMessage: "Missing require parameter!",
         });
       } else {
         let dataSchedule = await db.Schedule.findAll({
@@ -297,11 +297,19 @@ let getScheduleByDate = (doctorId, date) => {
               as: "timeTypeData",
               attributes: ["valueEn", "valueVi"],
             },
+
+            {
+              model: db.User,
+              as: "doctorData",
+              attributes: ["firstName", "lastName"],
+            },
           ],
-          raw: false,
+          raw: true,
           nest: true,
         });
-        if (!dataSchedule) return (dataSchedule = []);
+
+        if (!dataSchedule) dataSchedule = [];
+
         resolve({
           errCode: 0,
           data: dataSchedule,
