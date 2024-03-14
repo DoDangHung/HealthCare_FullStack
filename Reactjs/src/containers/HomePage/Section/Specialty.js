@@ -6,9 +6,27 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "././Specialty.scss";
+import { getAllSpecialty } from "../../../services/userService";
 
 class Specialty extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSpecialty: [],
+    };
+  }
+
+  async componentDidMount() {
+    let res = await getAllSpecialty();
+    console.log("check chuyen khoa", res);
+    if (res && res.errCode === 0) {
+      this.setState({
+        dataSpecialty: res.data ? res.data : [],
+      });
+    }
+  }
   render() {
+    let { dataSpecialty } = this.state;
     let settings = {
       infinite: true,
       slidesToShow: 4,
@@ -26,27 +44,20 @@ class Specialty extends Component {
                 <button className="btn-section">Xem them</button>
               </div>
               <div className="specialty-body">
-                <Slider {...settings}>
-                  <div className="img-content">
-                    <div className="bg-img"></div>
-                    <div>Cơ xương khớp 1</div>
-                  </div>
-                  <div className="img-content">
-                    <div className="bg-img"></div>
-                    <div>Cơ xương khớp 1</div>
-                  </div>
-                  <div className="img-content">
-                    <div className="bg-img"></div>
-                    <div>Cơ xương khớp 1</div>
-                  </div>
-                  <div className="img-content">
-                    <div className="bg-img"></div>
-                    <div>Cơ xương khớp 1</div>
-                  </div>
-                  <div className="img-content">
-                    <div className="bg-img"></div>
-                    <div>Cơ xương khớp 1</div>
-                  </div>
+                <Slider {...this.props.settings}>
+                  {dataSpecialty &&
+                    dataSpecialty.length > 0 &&
+                    dataSpecialty.map((item, index) => {
+                      return (
+                        <div className="img-content" key={index}>
+                          <div
+                            className="bg-img"
+                            style={{ backgroundImage: `url(${item.image})` }}
+                          ></div>
+                          <div className="text-content">{item.name}</div>
+                        </div>
+                      );
+                    })}
                 </Slider>
               </div>
             </div>
