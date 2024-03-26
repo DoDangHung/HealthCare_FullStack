@@ -26,13 +26,6 @@ class ProfileDoctor extends Component {
     });
   }
 
-  async componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.language !== prevProps.language) {
-    }
-    if (this.props.doctorId !== prevProps.doctorId) {
-      // this.getInforDoctor(this.props.doctorId);
-    }
-  }
   getInforDoctor = async (id) => {
     let result = {};
     if (id) {
@@ -41,8 +34,23 @@ class ProfileDoctor extends Component {
         result = res.data;
       }
     }
+
     return result;
   };
+
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.language !== prevProps.language) {
+    }
+
+    if (this.props.doctorId !== prevProps.doctorId) {
+      // this.getInforDoctor(this.props.doctorId);
+      let data = await this.getInforDoctor(this.props.doctorId);
+      this.setState({
+        dataProfile: data,
+      });
+    }
+  }
+
   renderTimeBooking = (dataTime) => {
     let { language } = this.props;
 
@@ -57,31 +65,42 @@ class ProfileDoctor extends Component {
           : moment
               .unix(+dataTime.date / 1000)
               .locale("en")
-              .format("ddd - DD/MM/YYYY");
+              .format("ddd - MM/DD/YYYY");
       return (
         <>
           <div>
             {time} - {date}
           </div>
-          <div>Mien phi dat lich</div>
+          <div>
+            <FormattedMessage id="patient.booking-modal.priceBooking" />
+          </div>
         </>
       );
     }
+
     return <></>;
   };
+
   render() {
     let { dataProfile } = this.state;
-    let { language, isShowDescriptionDoctor, dataTime } = this.props;
+    let {
+      language,
+      isShowDescriptionDoctor,
+      dataTime,
+      isShowLinkDetail,
+      isShowPrice,
+      doctorId,
+    } = this.props;
     let nameVi = "",
       nameEn = "";
     if (dataProfile && dataProfile.positionData) {
       nameVi = `${dataProfile.positionData.valueVi}, ${dataProfile.lastName} ${dataProfile.firstName}`;
       nameEn = `${dataProfile.positionData.valueEn}, ${dataProfile.firstName} ${dataProfile.lastName}`;
     }
-    console.log("check state profile doctor", this.state);
+
     return (
-      <>
-        <div className="form-detail-infor">
+      <div className="profile-doctor-container">
+        <div className="intro-doctor">
           <div
             className="content-left"
             style={{
@@ -90,12 +109,11 @@ class ProfileDoctor extends Component {
               })`,
             }}
           ></div>
-
           <div className="content-right">
-            <div className="form-title-booking">
+            <div className="up">
               {language === LANGUAGES.VI ? nameVi : nameEn}
             </div>
-            <div className="form-infor-booking">
+            <div className="down">
               {isShowDescriptionDoctor === true ? (
                 <>
                   {dataProfile &&
@@ -108,34 +126,41 @@ class ProfileDoctor extends Component {
                 <>{this.renderTimeBooking(dataTime)}</>
               )}
             </div>
-            <div className="form-title-time"></div>
           </div>
         </div>
-        <div className="price">
-          {dataProfile &&
-            dataProfile.Doctor_Infor &&
-            language === LANGUAGES.VI && (
-              <NumberFormat
-                className="currency"
-                value={dataProfile.Doctor_Infor.priceTypeData.valueVi}
-                displayType={"text"}
-                thousandSeparator={true}
-                suffix={"VND"}
-              />
-            )}
-          {dataProfile &&
-            dataProfile.Doctor_Infor &&
-            language === LANGUAGES.EN && (
-              <NumberFormat
-                className="currency"
-                value={dataProfile.Doctor_Infor.priceTypeData.valueEn}
-                displayType={"text"}
-                thousandSeparator={true}
-                suffix={"$"}
-              />
-            )}
-        </div>
-      </>
+        {isShowLinkDetail === true && (
+          <div className="view-detail-doctor">
+            <Link to={`/detail-doctor/${doctorId}`}>Xem thêm</Link>
+          </div>
+        )}
+        {isShowPrice === true && (
+          <div className="price">
+            <FormattedMessage id="patient.booking-modal.price" />
+            {dataProfile &&
+              dataProfile.Doctor_Infor &&
+              language === LANGUAGES.VI && (
+                <NumberFormat
+                  className="currency"
+                  value={dataProfile.Doctor_Infor.priceTypeData.valueVi}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  suffix={"VND"}
+                />
+              )}
+            {dataProfile &&
+              dataProfile.Doctor_Infor &&
+              language === LANGUAGES.EN && (
+                <NumberFormat
+                  className="currency"
+                  value={dataProfile.Doctor_Infor.priceTypeData.valueEn}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  suffix={"$"}
+                />
+              )}
+          </div>
+        )}
+      </div>
     );
   }
 }
