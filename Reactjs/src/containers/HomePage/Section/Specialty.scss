@@ -46,6 +46,7 @@
             box-shadow: rgb(201, 236, 240) 2px 2px 5px !important;
             width: 340px;
             height: 180px;
+            border-radius: 10px;
             background-position: center center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -85,6 +86,43 @@
         .slick-next::before {
           color: #5c9399;
           font-family: FontAwesome !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .specialty-section {
+    .specialty-content {
+      .specialty-container {
+        .specialty-header {
+          span {
+            font-size: 25px;
+          }
+        }
+        .specialty-body {
+          width: 100%;
+          .slick-slider {
+            .slick-arrow {
+              display: none !important;
+            }
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            position: relative;
+            left: -50px;
+            .slick-slide {
+              display: flex;
+              flex-direction: row;
+              padding-left: 32px;
+              .bg-img {
+                width: 146%;
+                height: 85px;
+                background-size: cover;
+              }
+            }
+          }
         }
       }
     }

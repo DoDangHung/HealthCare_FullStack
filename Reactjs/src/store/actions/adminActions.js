@@ -214,7 +214,6 @@ export const fetchTopDoctor = () => {
   return async (dispatch, getState) => {
     try {
       let res = await getTopDoctorHomeService("");
-      console.log("check res", res);
       if (res && res.errCode === 0) {
         dispatch({
           type: actionTypes.FETCH_TOP_DOCTORS_SUCCESS,
@@ -322,7 +321,7 @@ export const getRequiredDoctorInfor = () => {
       let resPayment = await getAllCodeService("PAYMENT");
       let resProvince = await getAllCodeService("PROVINCE");
       let resSpecialty = await getAllSpecialty();
-      // let resClinic = await getAllClinic();
+      let resClinic = await getAllClinic();
 
       if (
         resPrice &&
@@ -332,14 +331,16 @@ export const getRequiredDoctorInfor = () => {
         resProvince &&
         resProvince.errCode === 0 &&
         resSpecialty &&
-        resSpecialty.errCode === 0
+        resSpecialty.errCode === 0 &&
+        resClinic &&
+        resClinic.errCode === 0
       ) {
         let data = {
           resPrice: resPrice.data,
           resPayment: resPayment.data,
           resProvince: resProvince.data,
           resSpecialty: resSpecialty.data,
-          // resClinic: resClinic.data,
+          resClinic: resClinic.data,
         };
         dispatch(fetchRequiredDoctorInforSuccess(data));
       } else {

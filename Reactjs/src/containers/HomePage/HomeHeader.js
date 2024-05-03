@@ -5,21 +5,28 @@ import { connect } from "react-redux";
 import { LANGUAGES } from "../../utils";
 import { changeLanguageApp } from "../../store/actions/appActions";
 import { FormattedMessage } from "react-intl";
+import { searchSpecialtyByName } from "../../services/userService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { withRouter } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./HomeHeader.scss";
+import SearchBar from "./SearchBar";
+import SearchResultsList from "./SearchResultList";
+import NavBar from "./Navbar";
 class HeaderHome extends Component {
-  changeLanguage = (language) => {
-    this.props.changeLanguageAppRedux(language);
-  };
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-  backToHome = () => {
-    if (this.props.history) {
-      this.props.history.push(`/home`);
+  handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      this.handleSearch();
     }
   };
+
   render() {
     let settings = {
       dots: true,
@@ -44,99 +51,10 @@ class HeaderHome extends Component {
     );
 
     let language = this.props.language;
-    console.log("check props: ", this.props);
-    console.log("check info", this.props.userInfo);
+
     return (
       <>
-        <div className="home-header-container">
-          <div className="home-header-content">
-            <div className="left-content">
-              <i className="fa-solid fa-bars"></i>
-              <div
-                className="header-logo"
-                onClick={() => this.backToHome()}
-              ></div>
-            </div>
-            <div className="center-content">
-              <div className="child-content">
-                <div>
-                  <b>
-                    <FormattedMessage id="homeHeader.speciality" />
-                  </b>
-                </div>
-                <div className="subs-title">
-                  <FormattedMessage id="homeHeader.searchDoctor" />
-                </div>
-              </div>
-              <div className="child-content">
-                <div>
-                  <b>
-                    <FormattedMessage id="homeHeader.health-facility" />
-                  </b>
-                </div>
-                <div className="subs-title">
-                  <FormattedMessage id="homeHeader.chooseClinic" />
-                </div>
-              </div>
-              <div className="child-content">
-                <div>
-                  <b>
-                    <FormattedMessage id="homeHeader.doctor" />
-                  </b>
-                </div>
-                <div className="subs-title">
-                  <FormattedMessage id="homeHeader.goodDoctor" />
-                </div>
-              </div>
-              <div className="child-content">
-                <div>
-                  <b>
-                    <FormattedMessage id="homeHeader.package" />
-                  </b>
-                </div>
-                <div className="subs-title">
-                  <FormattedMessage id="homeHeader.healthCheck" />
-                </div>
-              </div>
-              <div className="child-content">
-                <div className="search">
-                  <i className="fa-solid fa-magnifying-glass"></i>
-                  <input type="text" placeholder="Tìm chuyên khoa" />
-                </div>
-              </div>
-            </div>
-            <div className="right-content">
-              <div className="support">
-                <i className="fa-solid fa-headset"></i>
-                <p>Hỗ trợ</p>
-              </div>
-              <div
-                className={
-                  language === LANGUAGES.VI ? "flags-VI active" : "flags-VI"
-                }
-              >
-                <span
-                  className="flags-VI"
-                  onClick={() => this.changeLanguage(LANGUAGES.VI)}
-                >
-                  VN
-                </span>
-              </div>
-              <div
-                className={
-                  language === LANGUAGES.EN ? "flags-EN active" : "flags-EN"
-                }
-              >
-                <span
-                  className="flags-EN"
-                  onClick={() => this.changeLanguage(LANGUAGES.EN)}
-                >
-                  EN
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <NavBar />
         {this.props.isShowBanner === true && (
           <div className="home-banner">
             <div className="title-banner">
